@@ -52,14 +52,17 @@ slogging.SManager.getLogger = monkey_patched_getLogger
               help="Connect with given peer: <ipv4_addr>:<port> or "
                    "[<ipv6_addr>]:<port>")
 @click.option('--start-geth', is_flag=True, default=False,
-              help="Start geth node")
+              help="Start local geth node")
+@click.option('--start-geth-port', default=None, type=int,
+              help="Port number to be used by locally started geth node")
+@click.option('--geth-address', default=None,
+              help="Connect with given geth node: <ipv4_addr>:<port>")
 @click.option('--version', '-v', is_flag=True, default=False,
               help="Show Golem version information")
 # Python flags, needed by crossbar (package only)
 @click.option('-m', nargs=1, default=None)
 @click.option('--node', expose_value=False)
 @click.option('--klass', expose_value=False)
-@click.option('--geth-port', default=None)
 @click.option('-u', is_flag=True, default=False, expose_value=False)
 # Multiprocessing option (ignored)
 @click.option('--multiprocessing-fork', nargs=1, expose_value=False)
@@ -73,7 +76,7 @@ slogging.SManager.getLogger = monkey_patched_getLogger
               "possible values are WARNING, INFO or DEBUG")
 @click.option('--title', expose_value=False)
 def start(payments, monitor, datadir, node_address, rpc_address, peer,
-          start_geth, version, m, geth_port, loglevel):
+          start_geth, start_geth_port, geth_address, version, m, loglevel):
     freeze_support()
     delete_reactor()
 
@@ -103,7 +106,8 @@ def start(payments, monitor, datadir, node_address, rpc_address, peer,
 
         node = OptNode(peers=peer, node_address=node_address,
                        use_monitor=monitor, start_geth=start_geth,
-                       geth_port=geth_port, **config)
+                       start_geth_port=start_geth_port,
+                       geth_address=geth_address, **config)
         node.run(use_rpc=True)
 
 
