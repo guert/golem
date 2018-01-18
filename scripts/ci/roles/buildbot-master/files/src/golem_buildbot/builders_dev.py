@@ -449,6 +449,14 @@ class WindowsStepsFactory(StepsFactory):
             doStepIf=has_no_previous_success)
 
     @staticmethod
+    def daemon_check_step():
+        return steps.ShellCommand(
+            name='check existing hyperg and kill it if necessary',
+            command=['powershell.exe', r'scripts\check-daemon.ps1'],
+            haltOnFailure=True,
+            doStepIf=has_no_previous_success)
+
+    @staticmethod
     def daemon_start_step():
         return steps.ShellCommand(
             name='start hyperg',
