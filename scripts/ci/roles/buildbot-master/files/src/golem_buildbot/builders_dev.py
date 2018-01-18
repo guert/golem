@@ -114,6 +114,7 @@ class StepsFactory(object):
         factory.addStep(self.venv_step())
         factory.addStep(self.requirements_step())
         factory.addStep(self.taskcollector_step())
+        factory.addStep(self.daemon_check_step())
         factory.addStep(self.daemon_start_step())
         factory.addSteps(self.test_step())
         factory.addStep(self.coverage_step())
@@ -241,6 +242,14 @@ class StepsFactory(object):
             command='cat .version.ini | '
                     'grep "version =" | grep -o "[^ =]*$"',
             property='version',
+            haltOnFailure=True,
+            doStepIf=has_no_previous_success)
+
+    @staticmethod
+    def daemon_check_step():
+        return steps.ShellCommand(
+            name='check existing hyperg and kill it if necessary',
+            command=['scripts/check-daemon.sh'],
             haltOnFailure=True,
             doStepIf=has_no_previous_success)
 
