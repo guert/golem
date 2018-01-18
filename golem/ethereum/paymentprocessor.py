@@ -328,20 +328,6 @@ class PaymentProcessor(LoopingCallService):
             return False
         return True
 
-    def get_incomes_from_block(self, block, address):
-        return self.__token.get_incomes_from_block(block, address)
-
-    def get_logs(self,
-                 from_block=None,
-                 to_block=None,
-                 address=None,
-                 topics=None):
-
-        return self.__client.get_logs(from_block=from_block,
-                                      to_block=to_block,
-                                      address=address,
-                                      topics=topics)
-
     def _run(self):
         if self._waiting_for_faucet:
             return
