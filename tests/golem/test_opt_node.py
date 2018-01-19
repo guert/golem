@@ -19,7 +19,7 @@ class TestNode(TestWithDatabase):
         super(TestNode, self).tearDown()
 
     @patch('twisted.internet.reactor', create=True)
-    def should_help_message_be_printed_out(self, mock_reactor, *_):
+    def test_should_help_message_be_printed_out(self, mock_reactor, *_):
         runner = CliRunner()
         return_value = runner.invoke(start, ['--help'], catch_exceptions=False)
         self.assertEqual(return_value.exit_code, 0)
@@ -27,7 +27,7 @@ class TestNode(TestWithDatabase):
         mock_reactor.run.assert_not_called()
 
     @patch('twisted.internet.reactor', create=True)
-    def wrong_option_should_fail(self, mock_reactor, *_):
+    def test_wrong_option_should_fail(self, mock_reactor, *_):
         runner = CliRunner()
         return_value = runner.invoke(start, ['--blargh'],
                                      catch_exceptions=False)
@@ -37,7 +37,7 @@ class TestNode(TestWithDatabase):
 
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.OptNode')
-    def node_address_should_be_passed_to_node(self, mock_node, *_):
+    def test_node_address_should_be_passed_to_node(self, mock_node, *_):
         node_address = '1.2.3.4'
 
         runner = CliRunner()
@@ -58,7 +58,7 @@ class TestNode(TestWithDatabase):
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.delete_reactor')
     @patch('golem.node.Client')
-    def node_address_should_be_passed_to_client(self, mock_client, *_):
+    def test_node_address_should_be_passed_to_client(self, mock_client, *_):
         """Test that with '--node-address <addr>' arg the client is started with
         a 'config_desc' arg such that 'config_desc.node_address' is <addr>.
         """
@@ -77,14 +77,14 @@ class TestNode(TestWithDatabase):
                                        use_docker_machine_manager=True,
                                        use_monitor=True)
 
-    def invalid_node_address_should_fail(self, *_):
+    def test_invalid_node_address_should_fail(self, *_):
         runner = CliRunner()
         args = self.args + ['--node-address', '10.30.10.2555']
         return_value = runner.invoke(start, args, catch_exceptions=False)
         self.assertEqual(return_value.exit_code, 2)
         self.assertIn('Invalid value for "--node-address"', return_value.output)
 
-    def missing_node_address_should_fail(self, *_):
+    def test_missing_node_address_should_fail(self, *_):
         runner = CliRunner()
         return_value = runner.invoke(start, self.args + ['--node-address'])
         self.assertEqual(return_value.exit_code, 2)
@@ -92,7 +92,7 @@ class TestNode(TestWithDatabase):
 
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.OptNode')
-    def geth_address_should_be_passed_to_node(self, mock_node, *_):
+    def test_geth_address_should_be_passed_to_node(self, mock_node, *_):
         geth_address = 'http://3.14.15.92:6535'
 
         runner = CliRunner()
@@ -114,7 +114,7 @@ class TestNode(TestWithDatabase):
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.delete_reactor')
     @patch('golem.node.Client')
-    def geth_address_should_be_passed_to_client(self, mock_client, *_):
+    def test_geth_address_should_be_passed_to_client(self, mock_client, *_):
         geth_address = 'http://3.14.15.92:6535'
         runner = CliRunner()
         args = self.args + ['--geth-address', geth_address]
@@ -130,7 +130,7 @@ class TestNode(TestWithDatabase):
                                        use_docker_machine_manager=True,
                                        use_monitor=True)
 
-    def geth_address_wo_http_should_fail(self, *_):
+    def test_geth_address_wo_http_should_fail(self, *_):
         runner = CliRunner()
         geth_addr = '3.14.15.92'
         args = self.args + ['--geth-address', geth_addr]
@@ -140,7 +140,7 @@ class TestNode(TestWithDatabase):
         self.assertIn('Address without http:// prefix', return_value.output)
         self.assertIn(geth_addr, return_value.output)
 
-    def geth_address_w_wrong_prefix_should_fail(self, *_):
+    def test_geth_address_w_wrong_prefix_should_fail(self, *_):
         runner = CliRunner()
         geth_addr = 'https://3.14.15.92'
         args = self.args + ['--geth-address', geth_addr]
@@ -150,7 +150,7 @@ class TestNode(TestWithDatabase):
         self.assertIn('Address without http:// prefix', return_value.output)
         self.assertIn(geth_addr, return_value.output)
 
-    def geth_address_wo_port_should_fail(self, *_):
+    def test_geth_address_wo_port_should_fail(self, *_):
         runner = CliRunner()
         geth_addr = 'http://3.14.15.92'
         args = self.args + ['--geth-address', geth_addr]
@@ -160,7 +160,7 @@ class TestNode(TestWithDatabase):
         self.assertIn('Invalid network address specified', return_value.output)
         self.assertIn(geth_addr[len(geth_addr):], return_value.output)
 
-    def geth_address_missing_should_fail(self, *_):
+    def test_geth_address_missing_should_fail(self, *_):
         runner = CliRunner()
         return_value = runner.invoke(start, self.args + ['--geth-address'])
         self.assertEqual(return_value.exit_code, 2)
@@ -168,7 +168,7 @@ class TestNode(TestWithDatabase):
 
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.OptNode')
-    def start_geth_should_be_passed_to_node(self, mock_node, *_):
+    def test_start_geth_should_be_passed_to_node(self, mock_node, *_):
         runner = CliRunner()
         args = self.args + ['--start-geth']
         return_value = runner.invoke(start, args, catch_exceptions=False)
@@ -188,7 +188,7 @@ class TestNode(TestWithDatabase):
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.delete_reactor')
     @patch('golem.node.Client')
-    def start_geth_should_be_passed_to_client(self, mock_client, *_):
+    def test_start_geth_should_be_passed_to_client(self, mock_client, *_):
         runner = CliRunner()
         args = self.args + ['--start-geth']
         return_value = runner.invoke(start, args, catch_exceptions=False)
@@ -203,14 +203,14 @@ class TestNode(TestWithDatabase):
                                        use_docker_machine_manager=True,
                                        use_monitor=True)
 
-    def start_geth_port_wo_param_should_fail(self, *_):
+    def test_start_geth_port_wo_param_should_fail(self, *_):
         runner = CliRunner()
         return_value = runner.invoke(start, self.args + ['--start-geth-port'])
         self.assertEqual(return_value.exit_code, 2)
         self.assertIn('Error: --start-geth-port option requires an argument',
                       return_value.output)
 
-    def start_geth_port_wo_start_geth_should_fail(self, *_):
+    def test_start_geth_port_wo_start_geth_should_fail(self, *_):
         runner = CliRunner()
         args = self.args + ['--start-geth-port', 1]
         return_value = runner.invoke(start, args)
@@ -220,7 +220,7 @@ class TestNode(TestWithDatabase):
 
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.OptNode')
-    def start_geth_port_should_be_passed_to_node(self, mock_node, *_):
+    def test_start_geth_port_should_be_passed_to_node(self, mock_node, *_):
         port = 27182
 
         runner = CliRunner()
@@ -242,7 +242,7 @@ class TestNode(TestWithDatabase):
     @patch('twisted.internet.reactor', create=True)
     @patch('golemapp.delete_reactor')
     @patch('golem.node.Client')
-    def start_geth_port_should_be_passed_to_client(self, mock_client, *_):
+    def test_start_geth_port_should_be_passed_to_client(self, mock_client, *_):
         port = 27182
 
         runner = CliRunner()
